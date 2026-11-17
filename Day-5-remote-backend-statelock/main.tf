@@ -23,3 +23,11 @@ resource "aws_subnet" "name2" {
     Name = "subnet-terraform2"
   }
 }
+resource "aws_subnet" "name3" {
+  vpc_id     = aws_vpc.name.id
+  cidr_block = "10.0.0.128/26"
+
+  tags = {
+    Name = "subnet-terraform3"
+  }
+}

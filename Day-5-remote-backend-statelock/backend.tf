@@ -6,6 +6,6 @@ terraform {
     dynamodb_table = "nani"
     encrypt      = true
     #use_lockfile = true
-    description  = "This is a test for remote backend with state lock"
+    #description  = "This is a test for remote backend with state lock"
   }
 }
