@@ -7,5 +7,6 @@
 
 #Terraform lock files
 .terraform.lock.hcl
+!production-web/.terraform.lock.hcl
 #documents
 *.doc
