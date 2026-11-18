@@ -184,7 +184,7 @@ resource "aws_db_instance" "primary" {
   monitoring_role_arn             = aws_iam_role.rds_enhanced_monitoring.arn
 
   deletion_protection       = true
-  skip_final_snapshot       = false
+  skip_final_snapshot       = true
   final_snapshot_identifier = "${var.db_identifier}-final"
 
   tags = {
@@ -212,7 +212,7 @@ resource "aws_db_instance" "read_replica" {
   monitoring_role_arn = aws_iam_role.rds_enhanced_monitoring.arn
 
   deletion_protection       = true
-  skip_final_snapshot       = false
+  skip_final_snapshot       = true
   final_snapshot_identifier = "${var.db_identifier}-replica-final"
 
   tags = {
