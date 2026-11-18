@@ -8,5 +8,6 @@
 #Terraform lock files
 .terraform.lock.hcl
 !production-web/.terraform.lock.hcl
+!Day-9-RDS-Read-Replica-RedisCache/.terraform.lock.hcl
 #documents
 *.doc
