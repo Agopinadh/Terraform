@@ -71,9 +71,10 @@ resource "aws_security_group" "webSg" {
   }
 
   egress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1" #     cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -94,32 +95,53 @@ resource "aws_instance" "server" {
     Name = "UbuntuServer"
   }
 
-  connection {
-    type = "ssh"
-    user = "ubuntu" # Replace with the appropriate username for your EC2 instance
-    # private_key = file("C:/Users/veerababu/.ssh/id_rsa")
-    private_key = file("~/.ssh/id_ed25519") #private key path
-    host        = self.public_ip            #or we can use aws_instance.server.public_ip
-    timeout     = "2m"
-  }
+  # connection {
+  #   type = "ssh"
+  #   user = "ubuntu" # Replace with the appropriate username for your EC2 instance
+  #   # private_key = file("C:/Users/veerababu/.ssh/id_rsa")
+  #   private_key = file("~/.ssh/id_ed25519") #private key path
+  #   host        = self.public_ip            #or we can use aws_instance.server.public_ip
+  #   timeout     = "2m"
+  # }
 
-  # File provisioner to copy a file from local to the remote EC2 instance
-  provisioner "file" {
-    source      = "file10"              # Replace with the path to your local file
-    destination = "/home/ubuntu/file10" # Replace with the path on the remote instance
-  }
-  # remote execution process 
+  # # File provisioner to copy a file from local to the remote EC2 instance
+  # provisioner "file" {
+  #   source      = "file10"              # Replace with the path to your local file
+  #   destination = "/home/ubuntu/file10" # Replace with the path on the remote instance
+  # }
+  # # remote execution process 
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "touch /home/ubuntu/file200",
+  #     "echo 'hello from aws from Lenovo' >> /home/ubuntu/file200", ##mysql -h -u user -p
+  #   ]
+  # }
+  # provisioner "local-exec" {
+  #   command = "touch file 500"
+
+  # }
+}
+resource "null_resource" "run_script" {
   provisioner "remote-exec" {
-    inline = [
-      "touch /home/ubuntu/file200",
-      "echo 'hello from aws' >> /home/ubuntu/file200", ##mysql -h -u user -p
-    ]
+    connection {
+      host        = aws_instance.server.public_ip
+      user        = "ubuntu"
+      private_key = file("~/.ssh/id_ed25519")
+    }
+  # provisioner "file"
+  #   {
+  #     source = "file10"
+  #     destination = "/home/ubuntu.dev.sh"
+  #   }  
+    inline = ["echo 'Hello from aws Lenovo' >> /home/ubuntu/file200"]
+    # i want to run test.sh script
+    #"bash /home/ubuntu.test.sh" # Assuming test.sh is already on the instance
   }
-  provisioner "local-exec" {
 
-    command = "touch file 500"
 
-  }
+  triggers = {
+    always_run = "${timestamp()}" # Forces rerun everytime
+    script_hash = filemd5("dev.sh") # Rerun only if script changes
+}
 }
 
- 
