@@ -140,10 +140,10 @@ resource "null_resource" "remote_sql_exec" {
     ]
 
   }
-
-
   triggers = {
     always_run = timestamp() # Trigger everytime apply
   }
 
 }
+
+# terraform taint null_resource.remote_sql_exec we can use taint also for alternate to trigger 
