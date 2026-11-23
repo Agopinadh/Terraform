@@ -80,6 +80,6 @@ output "vpc_endpoint_ids" {
   description = "VPC endpoint IDs"
   value = {
     secretsmanager = aws_vpc_endpoint.secretsmanager.id
-    logs            = aws_vpc_endpoint.logs.id
+    logs           = aws_vpc_endpoint.logs.id
   }
 }

@@ -5,6 +5,7 @@ data "archive_file" "lambda" {
   type        = "zip"
   source_dir  = "${path.module}/lambda/package"
   output_path = "${path.module}/lambda.zip"
+  excludes    = ["**/__pycache__/**"]
 }
 
 locals {
@@ -69,13 +70,15 @@ resource "aws_db_instance" "main" {
   instance_class              = var.db_instance_class
   allocated_storage           = 20
   storage_type                = "gp3"
+  storage_encrypted           = true
   db_name                     = "appdb"
   username                    = "dbadmin"
   manage_master_user_password = true
   db_subnet_group_name        = aws_db_subnet_group.main.name
   vpc_security_group_ids      = [aws_security_group.db.id]
   publicly_accessible         = false
-  backup_retention_period     = 1
+  multi_az                    = false
+  backup_retention_period     = 7
   deletion_protection         = false
   skip_final_snapshot         = true
 }
@@ -183,7 +186,16 @@ resource "aws_vpc_endpoint" "secretsmanager" {
   subnet_ids          = aws_subnet.private[*].id
   security_group_ids  = [aws_security_group.endpoints.id]
   private_dns_enabled = true
-  tags                = { Name = "${var.name}-secretsmanager" }
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = "*"
+      Action    = ["secretsmanager:GetSecretValue"]
+      Resource  = aws_db_instance.main.master_user_secret[0].secret_arn
+    }]
+  })
+  tags = { Name = "${var.name}-secretsmanager" }
 }
 resource "aws_vpc_endpoint" "logs" {
   vpc_id              = aws_vpc.main.id
